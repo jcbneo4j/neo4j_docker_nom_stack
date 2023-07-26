@@ -53,7 +53,3 @@ neo4j-ops-manager-agent-1.7.1/bin/agent console
 ```
 Once started (after a few seconds), return to the NOM UI and the NOM home page should be populated with the Neo4j instance in your Docker stack. 
 
-
-
-
-## Data Model
