@@ -9,9 +9,15 @@ The project runs on docker compose so having docker/docker compose is necessary 
 
 * Update hosts files as per [Prepare hosts file](https://neo4j.com/docs/ops-manager/current/first-look/docker-first-look/#_prepare_hosts_file)
 * Create as per [Create an empty directory for self-signed certificates](https://neo4j.com/docs/ops-manager/current/first-look/docker-first-look/#_create_an_empty_directory_for_self_signed_certificates)
-* Clone the project: 
+* Clone the project:
+```
+git clone git@github.com:jcbneo4j/neo4j_docker_nom_stack.git
+```
 * Navigate to the root of the project
-* Run: docker-compose up
+* Start docker-compose project:
+```
+docker-compose up
+```
 * [Login to the NOM UI](https://server:8080/) (default username/password is admin/passw0rd)
 * [Manually register agent] https://neo4j.com/docs/ops-manager/current/addition/agent-installation/manual/#register Note: save the config
 * In a separate terminal window, run as follows to identify the container for the agent config (note sample output below):
@@ -33,15 +39,15 @@ export CONFIG_TOKEN_CLIENT_SECRET=TXy28bBZkppRwJoaVU06pSJauhfRDembAqUTYK7naGwCqT
 ```
 
 * Download and unpackage the latest NOM agent binary (1.7 at this time) with the following two commands:
-
+```
 wget https://dist.neo4j.org/ops-manager/1.7.1/neo4j-ops-manager-agent-1.7.1-linux-amd64.tar.gz?_ga=2.255553032.1609962748.1690211691-315406528.1687617214
 
 tar xvf neo4j-ops-manager-agent-1.7.1-linux-amd64.tar.gz?_ga=2.255553032.1609962748.1690211691-315406528.1687617214
-
+```
 * Start the agent with the following command:
-
+```
 neo4j-ops-manager-agent-1.7.1/bin/agent console
-
+```
 Once started (after a few seconds), return to the NOM UI and the NOM home page should be populated with the Neo4j instance in your Docker stack. 
 
 
