@@ -16,12 +16,12 @@ The project runs on docker compose so having docker/docker compose is necessary 
 * [Manually register agent] https://neo4j.com/docs/ops-manager/current/addition/agent-installation/manual/#register Note: save the config
 * In a separate terminal window, run as follows to identify the container for the agent config (note sample output below):
 *     docker ps    
-
+```
 CONTAINER ID   IMAGE                            COMMAND                  CREATED          STATUS                    PORTS                                                           NAMES
 f4f518362635   neo4j/neo4j-ops-manager-server   "sh -c 'java -jar ap…"   33 minutes ago   Up 33 minutes             0.0.0.0:8080->8080/tcp, 0.0.0.0:9090->9090/tcp                  nom-server-1
 210a2deee414   neo4j:5.5.0-enterprise           "tini -g -- /startup…"   33 minutes ago   Up 33 minutes (healthy)   7473-7474/tcp, 7687/tcp, 0.0.0.0:10000-10001->10000-10001/tcp   nom-db-single-1
 e788183c620c   neo4j:4.4.8-enterprise           "tini -g -- /startup…"   33 minutes ago   Up 33 minutes (healthy)   7473-7474/tcp, 7687/tcp, 0.0.0.0:9000-9001->9000-9001/tcp       nom-storage-1
-
+```
 * From the sample output above, the CONTAINER ID for the nom-db-single-1 is 210a2deee414 - this will be a different ID for your instance of the container.
 * Run the following to exec into the continer (using your container ID): docker exec -it 210a2deee414 /bin/bash
 * Once inside the shell the prompt should look something like this -> root@db-single:/var/lib/neo4j#
