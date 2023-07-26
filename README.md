@@ -26,10 +26,11 @@ e788183c620c   neo4j:4.4.8-enterprise           "tini -g -- /startup…"   33 mi
 * Run the following to exec into the continer (using your container ID): docker exec -it 210a2deee414 /bin/bash
 * Once inside the shell the prompt should look something like this -> root@db-single:/var/lib/neo4j#
 * From the prompt, run the following two commands to update the container's environment to the token config from the agent registration step above, using the values obtained in the UI for CONFIG_TOKEN_CLIENT_ID and CONFIG_TOKEN_CLIENT_SECRET:
-
+```
 export CONFIG_TOKEN_CLIENT_ID=9467b11b-d2b8-4ce4-800e-6188f791153d
 
 export CONFIG_TOKEN_CLIENT_SECRET=TXy28bBZkppRwJoaVU06pSJauhfRDembAqUTYK7naGwCqT8nu901QShva3pHz313
+```
 
 * Download and unpackage the latest NOM agent binary (1.7 at this time) with the following two commands:
 
