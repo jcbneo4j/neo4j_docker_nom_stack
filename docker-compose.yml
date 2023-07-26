@@ -1,0 +1,98 @@
+networks:
+  lan:
+
+services:
+  storage:
+    hostname: storage
+    image: neo4j:4.4.8-enterprise
+    networks:
+      - lan
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
+      NEO4J_AUTH: neo4j/password123
+      NEO4J_dbms_default__advertised__address: storage
+      NEO4J_dbms_connector_http_listen__address: storage:9000
+      NEO4J_dbms_connector_bolt_listen__address: storage:9001
+    healthcheck:
+      test: [ "CMD-SHELL", "echo RETURN 1 | cypher-shell -a bolt://storage:9001 -u neo4j -p password123 || exit 1" ]
+
+  server:
+    hostname: server
+    image: neo4j/neo4j-ops-manager-server
+    depends_on:
+      storage:
+        condition: service_healthy
+    networks:
+      - lan
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    environment:
+      SPRING_NEO4J_URI: bolt://storage:9001
+      SPRING_NEO4J_AUTHENTICATION_USERNAME: neo4j
+      SPRING_NEO4J_AUTHENTICATION_PASSWORD: password123
+      SERVER_SSL_KEY_STORE_TYPE: PKCS12
+      SERVER_SSL_KEY_STORE: file:/certificates/server.pfx
+      SERVER_SSL_KEY_STORE_PASSWORD: password123
+      GRPC_SERVER_PORT: 9090
+      GRPC_SERVER_SECURITY_KEY_STORE_TYPE: PKCS12
+      GRPC_SERVER_SECURITY_KEY_STORE: file:/certificates/server.pfx
+      GRPC_SERVER_SECURITY_KEY_STORE_PASSWORD: password123
+      GRPC_SERVER_SECURITY_CLIENT_AUTH: OPTIONAL
+      CORS_ALLOWEDHEADERS: "*"
+      CORS_ALLOWEDORIGINS: "http://localhost:[*],https://localhost:[*], http://server:[*]"
+    volumes:
+      - type: bind
+        source: ~/.nom/ssc
+        target: /certificates
+    entrypoint:
+      - "sh"
+      - "-c"
+      - "java -jar app.jar ssc -n server -o /certificates -p password123 -d server -i 127.0.0.1 && java -jar app.jar"
+
+  db-single:
+    hostname: db-single
+    image: neo4j:5.5.0-enterprise
+    networks:
+      - lan
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+    environment:
+      CONFIG_SERVER_ADDRESS: "server:9090"
+      CONFIG_TOKEN_URL: "https://server:8080/api/login/agent"
+      CONFIG_TOKEN_CLIENT_ID: "90120e67-2cb1-4a7a-a9a3-a71a09bd7768"
+      CONFIG_TOKEN_CLIENT_SECRET: "o1T2HYqi35PnDEy4lYuyMranueKvxFSLqzAiNB72Tz9FFQ50GdY4WPgwMjkT039H"
+      CONFIG_TLS_TRUSTED_CERTS: "/certificates/server.cer"
+      CONFIG_LOG_LEVEL: "debug"
+      CONFIG_INSTANCE_1_NAME: "single-instance"
+      CONFIG_INSTANCE_1_BOLT_URI: "bolt://db-single:10001"
+      CONFIG_INSTANCE_1_BOLT_USERNAME: "neo4j"
+      CONFIG_INSTANCE_1_BOLT_PASSWORD: password123
+      CONFIG_INSTANCE_1_QUERY_LOG_PORT: "9500"
+      CONFIG_INSTANCE_1_LOG_CONFIG_PATH: "/var/lib/neo4j/conf/server-logs.xml"
+      CONFIG_INSTANCE_1_QUERY_LOG_MIN_DURATION: "1"
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
+      NEO4J_AUTH: neo4j/password123
+      NEO4J_EDITION: "enterprise"
+      NEO4J_server_default__advertised__address: db-single
+      NEO4J_server_http_listen__address: db-single:10000
+      NEO4J_server_bolt_listen__address: db-single:10001
+      NEO4J_server_bolt_advertised__address: db-single:10001
+      NEO4J_server_metrics_prometheus_enabled: "true"
+      NEO4J_server_metrics_prometheus_endpoint: "localhost:2004"
+      NEO4J_server_metrics_filter: "*"
+    volumes:
+       - type: bind
+         source: ~/.nom/ssc
+         target: /certificates
+    healthcheck:
+      test: [ "CMD-SHELL", "echo RETURN 1 | cypher-shell -a bolt://db-single:10001 -u neo4j -p password123 || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
