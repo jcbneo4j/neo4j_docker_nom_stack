@@ -19,7 +19,8 @@ git clone git@github.com:jcbneo4j/neo4j_docker_nom_stack.git
 docker-compose up
 ```
 * [Login to the NOM UI](https://server:8080/) (default username/password is admin/passw0rd)
-* [Manually register agent] https://neo4j.com/docs/ops-manager/current/addition/agent-installation/manual/#register Note: save the config
+* [Manually register agent](https://neo4j.com/docs/ops-manager/current/addition/agent-installation/manual/#register)
+  *** Note: save the config from registering the agent
 * In a separate terminal window, run as follows to identify the container for the agent config (note sample output below):
 ```
 docker ps
